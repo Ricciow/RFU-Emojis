@@ -3,7 +3,13 @@ name: Release
 on:
   push:
     branches:
-      - prod
+      - main
+    paths:
+      - "emojis/**"
+      - "scripts/**"
+      - "requirements.txt"
+      - "LICENSE.md"
+      - "NOTICE.md"
   workflow_dispatch:
     inputs:
       tag:
