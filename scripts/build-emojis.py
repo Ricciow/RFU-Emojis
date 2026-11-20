@@ -10,6 +10,7 @@ from PIL import Image
 
 ROOT = Path(__file__).resolve().parents[1]
 EMOJI_ID = re.compile(r"[a-z0-9_]+")
+EMOJI_ALIAS = re.compile(r"[a-z0-9_+-]+")
 FIELDS = {
     "aliases", "customTriggers", "height", "ascent", "listed",
     "textReplacement", "messageReplacement", "spriteId", "category",
@@ -32,8 +33,8 @@ def load_metadata(path):
         raise ValueError("Expected an emoji object with documented fields")
 
     aliases = string_list(metadata.get("aliases", []), "aliases")
-    if any(not EMOJI_ID.fullmatch(alias) for alias in aliases) or path.stem in aliases:
-        raise ValueError("Extra aliases must be valid IDs and differ from the file name")
+    if any(not EMOJI_ALIAS.fullmatch(alias) for alias in aliases) or path.stem in aliases:
+        raise ValueError("Aliases must use lowercase letters, digits, underscores, plus signs or hyphens and differ from the file name")
     string_list(metadata.get("customTriggers", []), "customTriggers")
 
     height = metadata.get("height", 8)
