@@ -1,6 +1,4 @@
 {
-  "customTriggers": [
-    "Boop!"
-  ],
+  "customTriggers": ["Boop!"],
   "textReplacement": "&d&lBoop!&r"
 }
