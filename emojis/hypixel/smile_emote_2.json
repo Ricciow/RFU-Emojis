@@ -1,0 +1,5 @@
+{
+  "useIdAsAlias": false,
+  "customTriggers": ["^_^"],
+  "textReplacement": "&a^_^"
+}
