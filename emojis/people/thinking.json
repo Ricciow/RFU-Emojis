@@ -1,5 +1,4 @@
 {
-  "aliases": [
-    "thinking_face"
-  ]
+  "aliases": ["thinking_face"],
+  "messageReplacement": "(0.o?)"
 }

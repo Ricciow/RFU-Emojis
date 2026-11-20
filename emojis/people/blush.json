@@ -1,4 +1,4 @@
 {
   "customTriggers": ["^*^"],
-  "textReplacement": "&d^*^"
+  "messageReplacement": "^*^"
 }

@@ -13,7 +13,7 @@ EMOJI_ID = re.compile(r"[a-z0-9_]+")
 EMOJI_ALIAS = re.compile(r"[a-z0-9_+-]+")
 FIELDS = {
     "aliases", "customTriggers", "height", "ascent", "listed",
-    "textReplacement", "messageReplacement", "spriteId", "category",
+    "textReplacement", "messageReplacement", "spriteId", "category", "useIdAsAlias",
 }
 
 
@@ -43,6 +43,8 @@ def load_metadata(path):
         raise ValueError("Expected a positive height and an ascent between zero and height")
     if type(metadata.get("listed", True)) is not bool:
         raise ValueError("listed must be a boolean")
+    if type(metadata.get("useIdAsAlias", True)) is not bool:
+        raise ValueError("useIdAsAlias must be a boolean")
     if "spriteId" in metadata:
         sprite = metadata["spriteId"]
         if not isinstance(sprite, str) or not EMOJI_ID.fullmatch(sprite):
@@ -105,10 +107,13 @@ def collect_emojis(directory):
             elif "spriteId" in metadata or not {"textReplacement", "messageReplacement"} & metadata.keys():
                 raise ValueError("Expected a PNG or a text/message replacement")
 
-            entry_triggers = [f":{alias}:" for alias in [emoji_id, *metadata.get("aliases", [])]]
+            alias_list = ([emoji_id] if metadata.get("useIdAsAlias", True) else []) + list(metadata.get("aliases", []))
+            entry_triggers = [f":{alias}:" for alias in alias_list]
             entry_triggers.extend(metadata.get("customTriggers", []))
-            if "textReplacement" in metadata and "messageReplacement" in metadata:
+            if ("textReplacement" in metadata or "texture" in metadata) and "messageReplacement" in metadata:
                 entry_triggers.append(metadata["messageReplacement"])
+            if not entry_triggers:
+                raise ValueError("Emoji must define at least one alias or custom trigger")
             for trigger in entry_triggers:
                 owner = triggers.setdefault(trigger.casefold(), emoji_id)
                 if owner != emoji_id:

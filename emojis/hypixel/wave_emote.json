@@ -1,4 +1,5 @@
 {
+  "useIdAsAlias": false,
   "customTriggers": ["o/"],
   "messageReplacement": "( ﾟ◡ﾟ)/",
   "textReplacement": "&d( ﾟ◡ﾟ)/"

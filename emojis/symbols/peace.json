@@ -1,5 +1,4 @@
 {
-  "aliases": [
-    "peace_symbol"
-  ]
+  "aliases": ["peace_symbol"],
+  "messageReplacement": "✌"
 }
