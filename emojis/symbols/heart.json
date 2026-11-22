@@ -1,5 +1,4 @@
 {
   "aliases": ["red_heart"],
-  "customTriggers": ["<3"],
-  "messageReplacement": "❤"
+  "customTriggers": ["<3"]
 }
