@@ -14,7 +14,6 @@ EMOJI_ALIAS = re.compile(r"[a-z0-9_+-]+")
 FIELDS = {
     "aliases", "customTriggers", "height", "ascent", "listed",
     "textReplacement", "messageReplacement", "spriteId", "category", "useIdAsAlias",
-    "subcategory",
 }
 
 
@@ -50,12 +49,6 @@ def load_metadata(path):
         sprite = metadata["spriteId"]
         if not isinstance(sprite, str) or not EMOJI_ID.fullmatch(sprite):
             raise ValueError("spriteId must be a valid ID")
-    if "subcategory" in metadata:
-        subcategory = metadata["subcategory"]
-        if not isinstance(subcategory, str) or not subcategory.strip() or not subcategory.isprintable():
-            raise ValueError("subcategory must be a nonempty line of text")
-        metadata["subcategory"] = subcategory.strip()
-
     for field in ("textReplacement", "messageReplacement"):
         if field not in metadata:
             continue
@@ -79,15 +72,15 @@ def load_png(path):
 
 
 def collect_emojis(directory):
-    sources = sorted({
+    sources = {
         path.with_suffix("") for path in directory.rglob("*")
         if path.is_file() and path.suffix in {".png", ".json"}
-    })
+    }
     entries = {}
     textures = {}
     sprites = set()
     triggers = {}
-    for base in sources:
+    for base in sorted(sources, key=lambda path: (path.relative_to(directory).parts[0], path.name)):
         emoji_id = base.name
         metadata_path = base.with_suffix(".json")
         texture_path = base.with_suffix(".png")
@@ -98,10 +91,17 @@ def collect_emojis(directory):
                 raise ValueError(f"Duplicate emoji ID {emoji_id!r}")
             metadata = load_metadata(metadata_path) if metadata_path.is_file() else {}
             folders = base.relative_to(directory).parts[:-1]
+            if len(folders) > 2:
+                raise ValueError("Expected at most one subcategory folder")
             category = metadata.get("category", folders[0] if folders else "general")
             if not isinstance(category, str) or not EMOJI_ID.fullmatch(category):
                 raise ValueError("Category must use lowercase letters, digits and underscores")
             metadata["category"] = category
+            if len(folders) == 2:
+                subcategory = folders[1]
+                if not subcategory.strip() or not subcategory.isprintable():
+                    raise ValueError("Subcategory folder must have a nonempty, printable name")
+                metadata["subcategory"] = subcategory
             if texture_path.is_file():
                 sprite = metadata.get("spriteId", emoji_id)
                 if sprite in sprites:
