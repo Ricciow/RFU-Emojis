@@ -1,4 +1,5 @@
 {
+  "subcategory": "Gifting",
   "customTriggers": ["h/"],
   "messageReplacement": "ヽ(^◇^*)/",
   "textReplacement": "&eヽ(^◇^*)/"

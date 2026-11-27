@@ -14,6 +14,7 @@ EMOJI_ALIAS = re.compile(r"[a-z0-9_+-]+")
 FIELDS = {
     "aliases", "customTriggers", "height", "ascent", "listed",
     "textReplacement", "messageReplacement", "spriteId", "category", "useIdAsAlias",
+    "subcategory",
 }
 
 
@@ -49,6 +50,11 @@ def load_metadata(path):
         sprite = metadata["spriteId"]
         if not isinstance(sprite, str) or not EMOJI_ID.fullmatch(sprite):
             raise ValueError("spriteId must be a valid ID")
+    if "subcategory" in metadata:
+        subcategory = metadata["subcategory"]
+        if not isinstance(subcategory, str) or not subcategory.strip() or not subcategory.isprintable():
+            raise ValueError("subcategory must be a nonempty line of text")
+        metadata["subcategory"] = subcategory.strip()
 
     for field in ("textReplacement", "messageReplacement"):
         if field not in metadata:
